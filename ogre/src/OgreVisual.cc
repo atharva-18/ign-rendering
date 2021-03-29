@@ -115,12 +115,8 @@ void OgreVisual::SetTransparency(double _transp)
 
     entity = dynamic_cast<Ogre::Entity*>(obj);
 
-    ignwarn << "Fetched entity..." << std::endl;
-
     if (!entity)
       continue;
-
-    ignwarn << "Num entities: " << entity->getNumSubEntities() << std::endl;
 
     // For each ogre::entity
     for (unsigned int j = 0; j < entity->getNumSubEntities(); j++)
@@ -135,15 +131,12 @@ void OgreVisual::SetTransparency(double _transp)
       Ogre::Pass *pass;
       Ogre::ColourValue dc;
 
-      ignwarn << "Num techniques: " << entityMaterial->getNumTechniques() << std::endl;
-
       for (techniqueCount = 0;
            techniqueCount < entityMaterial->getNumTechniques();
            ++techniqueCount)
       {
         technique = entityMaterial->getTechnique(techniqueCount);
 
-        ignwarn << "Num passes: " << technique->getNumPasses() << std::endl;
         for (passCount = 0; passCount < technique->getNumPasses(); passCount++)
         {
           pass = technique->getPass(passCount);
@@ -151,9 +144,8 @@ void OgreVisual::SetTransparency(double _transp)
           pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
         
           dc = pass->getDiffuse();
-          dc.a = (1.0f - 0.5f);
+          dc.a = (1.0f - _transp);
           pass->setDiffuse(dc);
-          // this->dataPtr->diffuse = Conversions::Convert(dc);
 
           for (unsigned int unitStateCount = 0; unitStateCount <
               pass->getNumTextureUnitStates(); ++unitStateCount)
@@ -165,7 +157,7 @@ void OgreVisual::SetTransparency(double _transp)
             {
               textureUnitState->setAlphaOperation(
                   Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT,
-                  1.0 - 0.5);
+                  1.0 - _transp);
             }
           }
         }
